@@ -59,7 +59,7 @@ export function Header() {
                 {userRole === Role.TEACHER && (
                   <NavigationMenuItem>
                     <Link
-                      href="/dashboard/teacher"
+                      href="/dashboard/professor"
                       className={navigationMenuTriggerStyle()}
                     >
                       Dashboard (Professor)
@@ -70,7 +70,7 @@ export function Header() {
                 {userRole === Role.STUDENT && (
                   <NavigationMenuItem>
                     <Link
-                      href="/dashboard/student"
+                      href="/dashboard/aluno"
                       className={navigationMenuTriggerStyle()}
                     >
                       Minha Rotina (Aluno)
