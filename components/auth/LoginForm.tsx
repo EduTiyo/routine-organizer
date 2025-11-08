@@ -45,9 +45,9 @@ export function LoginForm() {
 
       // Redirecionar baseado no role
       if (session?.user?.role === "TEACHER") {
-        router.push("/dashboard/teacher");
+        router.push("/dashboard/professor");
       } else if (session?.user?.role === "STUDENT") {
-        router.push("/dashboard/student");
+        router.push("/dashboard/aluno");
       } else {
         router.push("/dashboard");
       }
