@@ -1,15 +1,36 @@
-## Objetivo
-Fazer com que crianças neurodivergentes, que possuem dificuldade no aprendizado de rotinas, sintam mais facilidade no seu dia a dia.
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Público-alvo
-Crianças neurodivergentes na faixa etária de 4-10 anos.
+## Getting Started
 
-## Requisitos de aprendizagem
-- **Sinalização Explícita da Transição**: O fim de uma atividade (sinal sonoro e visual) deve ser imediatamente seguido pelo destaque da próxima. Isso ensina a Transição Cartões de forma segura.
-- **Suporte à Comunicação Aumentativa**: O OA deve suportar o uso de imagens para a representação das atividades, facilitando a compreensão.
-- **Medição Temporal Concreta**: O tempo alocado para a tarefa (Timer) deve ser representado visualmente (ponteiro) de forma concreta, ajudando o aluno a internalizar a passagem do tempo.
-- **Incentivo à Ação e Conclusão**: O sistema deve exigir uma ação voluntária do aluno para registrar o término da atividade, promovendo o senso de responsabilidade e autonomia.
-- **Feedback Reforçador Imediato**: O reforço positivo (auditivo e visual) deve ser imediato e consistente após a conclusão correta, incentivando a repetição do comportamento desejado.
+First, run the development server:
 
-## Mapa Conceitual
-<img width="681" height="441" alt="image" src="https://github.com/user-attachments/assets/c0f5f65b-58a2-4bba-9ecf-57e193a2700e" />
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
