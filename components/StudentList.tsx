@@ -7,7 +7,7 @@ interface StudentListProps {
 
 const StudentList = ({ students }: StudentListProps) => {
   return (
-    <ul>
+    <ul className="flex flex-wrap gap-6 justify-center">
       {students.map((student) => (
         <li key={student.id}>
           <StudentCard student={student} />
