@@ -50,7 +50,7 @@ export default function ProfessorDashboard() {
   if (error) return <div style={{ color: "red" }}>Erro: {error}</div>;
 
   return (
-    <div className="p-4">
+    <div className="p-6">
       <div className="space-y-4">
         <h1 className="text-2xl font-bold">Lista de Alunos Registrados</h1>
         {students.length === 0 ? (
