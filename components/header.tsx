@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { AppIcon } from "@/public/icons/AppIcon";
 
 export function Header() {
   const { data: session, status } = useSession();
@@ -21,66 +22,72 @@ export function Header() {
   return (
     <header className="border-b">
       <div className="flex items-center justify-between px-4 py-3">
-        {/* Seção da esquerda - Navigation Menu */}
-        <NavigationMenu>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <Link href="/" className={navigationMenuTriggerStyle()}>
-                Meu PEI (Home)
-              </Link>
-            </NavigationMenuItem>
-
-            {status === "loading" && (
+        <div className="flex justify-start gap-6 items-center">
+          <AppIcon className="h-10 w-10" />
+          {/* Seção da esquerda - Navigation Menu */}
+          <NavigationMenu>
+            <NavigationMenuList>
               <NavigationMenuItem>
-                <Skeleton className="h-9 w-20 rounded-md" />
+                <Link href="/" className={navigationMenuTriggerStyle()}>
+                  Meu PEI (Home)
+                </Link>
               </NavigationMenuItem>
-            )}
 
-            {status === "unauthenticated" && (
-              <>
+              {status === "loading" && (
                 <NavigationMenuItem>
-                  <Link href="/login" className={navigationMenuTriggerStyle()}>
-                    Login
-                  </Link>
+                  <Skeleton className="h-9 w-20 rounded-md" />
                 </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link
-                    href="/register"
-                    className={navigationMenuTriggerStyle()}
-                  >
-                    Registrar
-                  </Link>
-                </NavigationMenuItem>
-              </>
-            )}
+              )}
 
-            {status === "authenticated" && (
-              <>
-                {userRole === Role.TEACHER && (
+              {status === "unauthenticated" && (
+                <>
                   <NavigationMenuItem>
                     <Link
-                      href="/dashboard/professor"
+                      href="/login"
                       className={navigationMenuTriggerStyle()}
                     >
-                      Dashboard (Professor)
+                      Login
                     </Link>
                   </NavigationMenuItem>
-                )}
-
-                {userRole === Role.STUDENT && (
                   <NavigationMenuItem>
                     <Link
-                      href="/dashboard/aluno"
+                      href="/register"
                       className={navigationMenuTriggerStyle()}
                     >
-                      Minha Rotina (Aluno)
+                      Registrar
                     </Link>
                   </NavigationMenuItem>
-                )}
-              </>
-            )}
-          </NavigationMenuList>
-        </NavigationMenu>
+                </>
+              )}
+
+              {status === "authenticated" && (
+                <>
+                  {userRole === Role.TEACHER && (
+                    <NavigationMenuItem>
+                      <Link
+                        href="/dashboard/professor"
+                        className={navigationMenuTriggerStyle()}
+                      >
+                        Dashboard (Professor)
+                      </Link>
+                    </NavigationMenuItem>
+                  )}
+
+                  {userRole === Role.STUDENT && (
+                    <NavigationMenuItem>
+                      <Link
+                        href="/dashboard/aluno"
+                        className={navigationMenuTriggerStyle()}
+                      >
+                        Minha Rotina (Aluno)
+                      </Link>
+                    </NavigationMenuItem>
+                  )}
+                </>
+              )}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
 
         {/* Seção da direita - Botão Sair */}
         {status === "authenticated" && (

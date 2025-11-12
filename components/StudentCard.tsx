@@ -6,6 +6,7 @@ import { Card } from "./ui/card";
 import { Toggle } from "@/components/ui/toggle";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { UserIcon } from "lucide-react";
 
 interface StudentCardProps {
   student: Partial<User> & { isLinked?: boolean };
@@ -63,17 +64,20 @@ const StudentCard = ({ student }: StudentCardProps) => {
 
   return (
     <Card className="flex flex-col justify-between p-6 mb-4 w-80 h-48 rounded-xl shadow-sm">
-      <h2
-        className="text-lg font-bold truncate mb-2"
-        title={student.name || ""}
-      >
-        {student.name || "Sem nome"}
-      </h2>
+      <div className="flex">
+        <UserIcon className="h-8 w-8 text-gray-300 mr-4" />
+        <h2
+          className="text-lg font-bold truncate mb-2"
+          title={student.name || ""}
+        >
+          {student.name || "Sem nome"}
+        </h2>
+      </div>
 
       <p className="text-sm text-gray-600 truncate" title={student.email || ""}>
         {student.email}
       </p>
-    
+
       <Toggle
         aria-label="Toggle vínculo"
         variant="outline"
