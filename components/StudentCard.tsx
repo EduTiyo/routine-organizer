@@ -7,6 +7,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { UserIcon } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface StudentCardProps {
   student: Partial<User> & { isLinked?: boolean };
@@ -78,16 +79,23 @@ const StudentCard = ({ student }: StudentCardProps) => {
         {student.email}
       </p>
 
-      <Toggle
-        aria-label="Toggle vínculo"
-        variant="outline"
-        size="sm"
-        pressed={linked}
-        onPressedChange={() => handleLink(student.id)}
-        className="data-[state=on]:bg-blue-500 data-[state=on]:text-white"
-      >
-        {linked ? "Vinculado" : "Vincular"}
-      </Toggle>
+      <div className="flex justify-between items-centr gap-4">
+        <Toggle
+          aria-label="Toggle vínculo"
+          variant="outline"
+          size="sm"
+          pressed={linked}
+          onPressedChange={() => handleLink(student.id)}
+          className="data-[state=on]:bg-blue-500 data-[state=on]:text-white w-full"
+        >
+          {linked ? "Vinculado" : "Vincular"}
+        </Toggle>
+        {linked && (
+          <Button className="h-8" variant="outline" size="sm" asChild>
+            <a href={`/dashboard/professor/${student.id}/rotina`}>Ver rotina</a>
+          </Button>
+        )}
+      </div>
     </Card>
   );
 };
