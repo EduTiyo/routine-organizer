@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
 import StudentList from "@/components/StudentList";
 import ForbiddenPage from "@/components/ForbiddenPage";
-import { Skeleton } from "@/components/ui/skeleton";
 import StudentCardSkeleton from "@/components/StudentCardSkeleton";
+import StudentListSkeleton from "@/components/StudentListSkeleton";
 
 export default function ProfessorDashboard() {
   const [students, setStudents] = useState<Partial<User>[]>([]);
@@ -55,11 +55,7 @@ export default function ProfessorDashboard() {
       <div className="space-y-4">
         <h1 className="text-2xl font-bold">Lista de Alunos Registrados</h1>
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-10 py-5">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <StudentCardSkeleton key={index} />
-            ))}
-          </div>
+          <StudentListSkeleton />
         ) : (
           <StudentList students={students} />
         )}
