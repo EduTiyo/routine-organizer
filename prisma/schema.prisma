@@ -114,7 +114,7 @@ model Atividade {
   title             String
   imageUrl          String               @map("image_url")
   order             Int
-  durationInSeconds Int?                 @map("duration_in_seconds")
+  estimatedTime     Int?                 @map("estimated_time")
   feedbackSoundType FeedbackSoundType?   @map("feedback_sound_type")
   rotinaId          String
   rotina            Rotina               @relation("RotinaToAtividade", fields: [rotinaId], references: [id], onDelete: Cascade)

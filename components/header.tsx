@@ -70,6 +70,12 @@ export function Header() {
                       >
                         Dashboard (Professor)
                       </Link>
+                      <Link
+                        href="/dashboard/professor/cartoes-virtuais"
+                        className={navigationMenuTriggerStyle()}
+                      >
+                        Cartões Virtuais
+                      </Link>
                     </NavigationMenuItem>
                   )}
 
