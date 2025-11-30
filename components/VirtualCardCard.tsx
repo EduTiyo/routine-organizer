@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { VirtualCard } from "./VirtualCardTypes";
+import { VirtualCard } from "../app/(private)/dashboard/professor/cartoes-virtuais/types/VirtualCardTypes";
 
 interface VirtualCardCardProps {
   card: VirtualCard;
