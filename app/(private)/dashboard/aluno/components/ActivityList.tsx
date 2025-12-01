@@ -32,7 +32,9 @@ const ActivityList = ({ atividades }: ActivityListProps) => {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">Atividades de hoje (em ordem):</p>
+      <p className="text-sm text-muted-foreground">
+        Atividades de hoje (em ordem):
+      </p>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {atividades.map((atividade, idx) => (
           <Card key={atividade.id} className="p-3 space-y-2">
@@ -49,7 +51,7 @@ const ActivityList = ({ atividades }: ActivityListProps) => {
               <img
                 src={atividade.imageUrl}
                 alt={atividade.title}
-                className="h-36 w-full object-cover rounded-md"
+                className="h-[50%] w-full object-cover rounded-md"
               />
             )}
             {renderClocks(atividade.estimatedTime)}
