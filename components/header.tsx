@@ -62,7 +62,7 @@ export function Header() {
                         href="/dashboard/professor"
                         className={navigationMenuTriggerStyle()}
                       >
-                        Estudantes
+                        Dashboard (Professor)
                       </Link>
                       <Link
                         href="/dashboard/professor/cartoes-virtuais"
@@ -74,22 +74,14 @@ export function Header() {
                   )}
 
                   {userRole === Role.STUDENT && (
-                    <>
-                      <NavigationMenuItem>
-                        <Link href="/" className={navigationMenuTriggerStyle()}>
-                          Meu PEI (Home)
-                        </Link>
-                      </NavigationMenuItem>
-
-                      <NavigationMenuItem>
-                        <Link
-                          href="/dashboard/aluno"
-                          className={navigationMenuTriggerStyle()}
-                        >
-                          Minha Rotina (Aluno)
-                        </Link>
-                      </NavigationMenuItem>
-                    </>
+                    <NavigationMenuItem>
+                      <Link
+                        href="/dashboard/aluno"
+                        className={navigationMenuTriggerStyle()}
+                      >
+                        Minha Rotina (Aluno)
+                      </Link>
+                    </NavigationMenuItem>
                   )}
                 </>
               )}
