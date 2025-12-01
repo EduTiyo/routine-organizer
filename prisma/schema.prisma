@@ -88,14 +88,23 @@ model TeacherStudentLink {
   @@map("teacher_student_links")
 }
 
+// Enum para status da rotina
+enum RotinaStatus {
+  PENDING   @map("PENDING")
+  COMPLETED @map("COMPLETED")
+  SKIPPED   @map("SKIPPED")
+  IN_PROGRESS @map("IN_PROGRESS")
+}
 // Modelo da Rotina (O conjunto de atividades)
 model Rotina {
-  id        String @id @default(cuid())
-  title     String
-  creatorId String @map("creator_id")
-  creator   User   @relation("CreatorToRotina", fields: [creatorId], references: [id], onDelete: Cascade)
-  studentId String @map("student_id")
-  student   User   @relation("AlunoToRotina", fields: [studentId], references: [id], onDelete: Cascade)
+  id                String      @id @default(cuid())
+  creatorId         String      @map("creator_id")
+  creator           User        @relation("CreatorToRotina", fields: [creatorId], references: [id], onDelete: Cascade)
+  studentId         String      @map("student_id")
+  student           User        @relation("AlunoToRotina", fields: [studentId], references: [id], onDelete: Cascade)
+  atividades        Atividade[] @relation("RotinaToAtividade")
+  dateOfRealization DateTime?   @map("date_of_realization")
+  status            RotinaStatus @default(PENDING)
 
   @@map("rotinas")
 }
@@ -109,6 +118,8 @@ model Atividade {
   creatorId     String               @map("creator_id")
   creator       User                 @relation("CreatorToAtividade", fields: [creatorId], references: [id], onDelete: Cascade)
   registros     RegistroDesempenho[] @relation("AtividadeToRegistro")
+  rotinaId      String?               @map("rotina_id")
+  rotina        Rotina?               @relation("RotinaToAtividade", fields: [rotinaId], references: [id], onDelete: Cascade)
 
   @@map("atividades")
 }

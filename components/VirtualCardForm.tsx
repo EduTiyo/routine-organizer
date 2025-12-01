@@ -173,7 +173,8 @@ const VirtualCardForm = ({ onSuccess, onForbidden }: VirtualCardFormProps) => {
                     />
                   </FormControl>
                   <FormDescription>
-                    Campo opcional usado apenas para referência.
+                    1 - Bem rápido. 2 - Rápido. 3 - Médio. 4 - Demorado. 5 -
+                    Muito demorado.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -200,10 +201,6 @@ const VirtualCardForm = ({ onSuccess, onForbidden }: VirtualCardFormProps) => {
                         }}
                       />
                     </FormControl>
-                    <FormDescription>
-                      O arquivo será enviado para o bucket configurado no MinIO
-                      (simulando o S3).
-                    </FormDescription>
                     {selectedFile?.name && (
                       <p className="text-xs text-muted-foreground">
                         Selecionado: {selectedFile.name}
