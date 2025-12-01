@@ -27,12 +27,6 @@ export function Header() {
           {/* Seção da esquerda - Navigation Menu */}
           <NavigationMenu>
             <NavigationMenuList>
-              <NavigationMenuItem>
-                <Link href="/" className={navigationMenuTriggerStyle()}>
-                  Meu PEI (Home)
-                </Link>
-              </NavigationMenuItem>
-
               {status === "loading" && (
                 <NavigationMenuItem>
                   <Skeleton className="h-9 w-20 rounded-md" />
@@ -68,7 +62,7 @@ export function Header() {
                         href="/dashboard/professor"
                         className={navigationMenuTriggerStyle()}
                       >
-                        Dashboard (Professor)
+                        Estudantes
                       </Link>
                       <Link
                         href="/dashboard/professor/cartoes-virtuais"
@@ -80,14 +74,22 @@ export function Header() {
                   )}
 
                   {userRole === Role.STUDENT && (
-                    <NavigationMenuItem>
-                      <Link
-                        href="/dashboard/aluno"
-                        className={navigationMenuTriggerStyle()}
-                      >
-                        Minha Rotina (Aluno)
-                      </Link>
-                    </NavigationMenuItem>
+                    <>
+                      <NavigationMenuItem>
+                        <Link href="/" className={navigationMenuTriggerStyle()}>
+                          Meu PEI (Home)
+                        </Link>
+                      </NavigationMenuItem>
+
+                      <NavigationMenuItem>
+                        <Link
+                          href="/dashboard/aluno"
+                          className={navigationMenuTriggerStyle()}
+                        >
+                          Minha Rotina (Aluno)
+                        </Link>
+                      </NavigationMenuItem>
+                    </>
                   )}
                 </>
               )}
