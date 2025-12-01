@@ -296,42 +296,46 @@ const StudentRoutinePage = () => {
                         return (
                           <div key={period} className="space-y-2">
                             <p className="text-sm font-semibold">{titulo}</p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              {atividadesFiltradas.map((atividade, idx) => (
-                                <div
-                                  key={atividade.id}
-                                  className={`border rounded-md p-3 bg-slate-50 ${
-                                    dragging?.atividadeId === atividade.id
-                                      ? "opacity-60"
-                                      : ""
-                                  }`}
-                                  draggable
-                                  onDragStart={handleDragStart(
-                                    rotina.id,
-                                    atividade.id
-                                  )}
-                                  onDragOver={handleDragOver}
-                                  onDrop={handleDrop(rotina.id, atividade.id)}
-                                  onDragEnd={handleDragEnd}
-                                >
-                                  <p className="font-medium">
-                                    {atividade.title}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    Ordem: {idx + 1}
-                                  </p>
-                                  {atividade.estimatedTime !== null && (
-                                    <p className="text-xs text-muted-foreground">
-                                      Tempo estimado: {atividade.estimatedTime}
-                                    </p>
-                                  )}
-                                  {atividade.timeInSeconds !== null && (
-                                    <p className="text-xs text-muted-foreground">
-                                      Tempo (s): {atividade.timeInSeconds}
-                                    </p>
-                                  )}
-                                </div>
-                              ))}
+                            <div className="overflow-x-auto pb-2">
+                              <div className="flex flex-nowrap gap-3">
+                                {atividadesFiltradas.map((atividade, idx) => (
+                                  <div
+                                    key={atividade.id}
+                                    className={`border rounded-md p-3 bg-slate-50 min-w-[220px] max-w-xs flex-shrink-0 ${
+                                      dragging?.atividadeId === atividade.id
+                                        ? "opacity-60"
+                                        : ""
+                                    }`}
+                                    draggable
+                                    onDragStart={handleDragStart(
+                                      rotina.id,
+                                      atividade.id
+                                    )}
+                                    onDragOver={handleDragOver}
+                                    onDrop={handleDrop(rotina.id, atividade.id)}
+                                    onDragEnd={handleDragEnd}
+                                  >
+                                    <div className="space-y-1">
+                                      <p className="font-medium">
+                                        {atividade.title}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        Ordem: {idx + 1}
+                                      </p>
+                                      {atividade.estimatedTime !== null && (
+                                        <p className="text-xs text-muted-foreground">
+                                          Tempo estimado: {atividade.estimatedTime}
+                                        </p>
+                                      )}
+                                      {atividade.timeInSeconds !== null && (
+                                        <p className="text-xs text-muted-foreground">
+                                          Tempo (s): {atividade.timeInSeconds}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         );
