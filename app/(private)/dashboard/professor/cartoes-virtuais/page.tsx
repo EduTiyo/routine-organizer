@@ -44,7 +44,12 @@ const CartoesVirtuaisPage = () => {
         }
 
         const data = (await res.json()) as VirtualCard[];
-        setCards(data);
+        const sorted = [...data].sort(
+          (a, b) =>
+            (a.order ?? Number.MAX_SAFE_INTEGER) -
+            (b.order ?? Number.MAX_SAFE_INTEGER)
+        );
+        setCards(sorted);
       } catch (err) {
         const message =
           err instanceof Error
@@ -63,6 +68,30 @@ const CartoesVirtuaisPage = () => {
     },
     []
   );
+
+  const persistOrder = useCallback(async (newOrder: string[]) => {
+    try {
+      const res = await fetch("/api/cartoes-virtuais/reorder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: newOrder }),
+      });
+
+      if (res.status === 403) {
+        setIsForbidden(true);
+        throw new Error("Acesso não autorizado");
+      }
+
+      if (!res.ok) {
+        const message = await res.text();
+        throw new Error(message || "Falha ao salvar ordem");
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Falha ao salvar ordem";
+      toast.error(message);
+    }
+  }, []);
 
   useEffect(() => {
     fetchVirtualCards({ showSkeleton: true });
@@ -94,7 +123,13 @@ const CartoesVirtuaisPage = () => {
         {loading ? (
           <VirtualCardListSkeleton />
         ) : (
-          <VirtualCardList cards={cards} />
+          <VirtualCardList
+            cards={cards}
+            onReorder={(reordered) => {
+              setCards(reordered);
+              persistOrder(reordered.map((c) => c.id));
+            }}
+          />
         )}
       </div>
     </div>

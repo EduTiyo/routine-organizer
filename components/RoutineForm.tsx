@@ -19,6 +19,9 @@ import { toast } from "react-toastify";
 type Atividade = {
   id: string;
   title: string;
+  dayPeriod: "MORNING" | "AFTERNOON" | "EVENING";
+  timeInSeconds: number | null;
+  order: number | null;
 };
 
 type RoutineFormProps = {
@@ -59,7 +62,10 @@ const RoutineForm = ({ studentId, onSuccess, onForbidden }: RoutineFormProps) =>
         }
 
         const data = (await res.json()) as Atividade[];
-        setAvailableActivities(data);
+        const sorted = [...data].sort(
+          (a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER)
+        );
+        setAvailableActivities(sorted);
       } catch (err) {
         const message =
           err instanceof Error ? err.message : "Falha ao carregar atividades";
@@ -186,11 +192,24 @@ const RoutineForm = ({ studentId, onSuccess, onForbidden }: RoutineFormProps) =>
               value={selectedActivities}
               onChange={handleActivitiesChange}
             >
-              {availableActivities.map((activity) => (
-                <option key={activity.id} value={activity.id}>
-                  {activity.title}
-                </option>
-              ))}
+              {availableActivities.map((activity) => {
+                const formattedPeriod =
+                  activity.dayPeriod === "MORNING"
+                    ? "Manhã"
+                    : activity.dayPeriod === "AFTERNOON"
+                    ? "Tarde"
+                    : "Noite";
+                const secondsText =
+                  activity.timeInSeconds && activity.timeInSeconds > 0
+                    ? ` — ${activity.timeInSeconds}s`
+                    : "";
+                return (
+                  <option key={activity.id} value={activity.id}>
+                    {activity.title} — {formattedPeriod}
+                    {secondsText}
+                  </option>
+                );
+              })}
             </select>
             <p className="text-xs text-muted-foreground">
               Selecione uma ou mais atividades já cadastradas.

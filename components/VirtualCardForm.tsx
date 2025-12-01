@@ -29,6 +29,12 @@ import { Loader2 } from "lucide-react";
 
 const createVirtualCardFormSchema = z.object({
   title: z.string().min(1, "Informe um título"),
+  dayPeriod: z.enum(["MORNING", "AFTERNOON", "EVENING"], {
+    required_error: "Selecione um período",
+  }),
+  timeInMinutes: z
+    .union([z.literal(""), z.coerce.number().int().min(1, "Tempo inválido")])
+    .optional(),
   estimatedTime: z
     .union([z.literal(""), z.coerce.number().int().min(1, "Tempo inválido")])
     .optional(),
@@ -41,6 +47,8 @@ const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 
 const defaultFormValues: CreateVirtualCardFormSchema = {
   title: "",
+  dayPeriod: "MORNING",
+  timeInMinutes: "",
   estimatedTime: "",
   image: undefined,
 };
@@ -87,6 +95,10 @@ const VirtualCardForm = ({ onSuccess, onForbidden }: VirtualCardFormProps) => {
       typeof values.estimatedTime === "number"
         ? values.estimatedTime
         : undefined;
+    const timeInMinutesValue =
+      typeof values.timeInMinutes === "number"
+        ? values.timeInMinutes
+        : undefined;
 
     const payload = new FormData();
     payload.append("title", values.title);
@@ -95,6 +107,11 @@ const VirtualCardForm = ({ onSuccess, onForbidden }: VirtualCardFormProps) => {
       payload.append("estimatedTime", String(estimatedTimeValue));
     }
 
+    if (timeInMinutesValue !== undefined) {
+      payload.append("timeInSeconds", String(timeInMinutesValue * 60));
+    }
+
+    payload.append("dayPeriod", values.dayPeriod);
     payload.append("image", file, file.name);
 
     try {
@@ -151,6 +168,48 @@ const VirtualCardForm = ({ onSuccess, onForbidden }: VirtualCardFormProps) => {
                   <FormLabel>Título</FormLabel>
                   <FormControl>
                     <Input placeholder="Nome do cartão" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="dayPeriod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Período do dia</FormLabel>
+                  <FormControl>
+                    <select
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      value={field.value}
+                      onChange={field.onChange}
+                    >
+                      <option value="MORNING">Manhã</option>
+                      <option value="AFTERNOON">Tarde</option>
+                      <option value="EVENING">Noite</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="timeInMinutes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tempo em minutos</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={1}
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      placeholder="Opcional"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

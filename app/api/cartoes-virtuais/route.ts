@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import prisma from "@/lib/prisma";
-import { Role } from "@prisma/client";
+import { DayPeriod, Role } from "@prisma/client";
 import {
   buildObjectUrl,
   ensureBucketExists,
@@ -29,21 +29,26 @@ export async function GET() {
         title: true,
         imageUrl: true,
         estimatedTime: true,
+        timeInSeconds: true,
         creator: {
           select: {
             id: true,
             name: true,
           },
         },
+        dayPeriod: true,
+        order: true,
       },
-      orderBy: [{ title: "asc" }],
+      orderBy: [{ order: "asc" }, { title: "asc" }],
     });
 
     const cardsWithImageUrl = virtualCards.map((card) => {
       const hasAbsoluteUrl = /^https?:\/\//i.test(card.imageUrl);
       return {
         ...card,
-        imageUrl: hasAbsoluteUrl ? card.imageUrl : buildObjectUrl(card.imageUrl),
+        imageUrl: hasAbsoluteUrl
+          ? card.imageUrl
+          : buildObjectUrl(card.imageUrl),
       };
     });
 
@@ -65,6 +70,8 @@ export async function POST(req: Request) {
     const formData = await req.formData();
     const title = String(formData.get("title") ?? "").trim();
     const estimatedTimeRaw = formData.get("estimatedTime");
+    const timeInSecondsRaw = formData.get("timeInSeconds");
+    const dayPeriodRaw = String(formData.get("dayPeriod") ?? "").trim();
     const imageFile = formData.get("image");
 
     if (!title) {
@@ -86,6 +93,23 @@ export async function POST(req: Request) {
       estimatedTime = parsedEstimatedTime;
     }
 
+    let timeInSeconds: number | null = null;
+    if (typeof timeInSecondsRaw === "string" && timeInSecondsRaw.trim()) {
+      const parsedSeconds = Number(timeInSecondsRaw);
+      if (
+        Number.isNaN(parsedSeconds) ||
+        !Number.isInteger(parsedSeconds) ||
+        parsedSeconds < 1
+      ) {
+        return new NextResponse("Tempo em segundos inválido", { status: 400 });
+      }
+      timeInSeconds = parsedSeconds;
+    }
+
+    if (!dayPeriodRaw || !Object.values(DayPeriod).includes(dayPeriodRaw as DayPeriod)) {
+      return new NextResponse("Período do dia inválido", { status: 400 });
+    }
+
     if (!(imageFile instanceof File) || imageFile.size === 0) {
       return new NextResponse("A imagem é obrigatória", { status: 400 });
     }
@@ -99,38 +123,41 @@ export async function POST(req: Request) {
     const bucketName = getBucketName();
     await ensureBucketExists(bucketName);
 
-    const sanitizedFileName = imageFile.name.replace(
-      /[^a-zA-Z0-9._-]/g,
-      "_"
-    );
-    const objectKey = `virtual-cards/${session.user.id}/${Date.now()}-${sanitizedFileName}`;
+    const sanitizedFileName = imageFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const objectKey = `virtual-cards/${
+      session.user.id
+    }/${Date.now()}-${sanitizedFileName}`;
     const buffer = Buffer.from(await imageFile.arrayBuffer());
     const minioClient = getMinioClient();
 
-    await minioClient.putObject(
-      bucketName,
-      objectKey,
-      buffer,
-      buffer.length,
-      {
-        "Content-Type": imageFile.type || "application/octet-stream",
-      }
-    );
+    await minioClient.putObject(bucketName, objectKey, buffer, buffer.length, {
+      "Content-Type": imageFile.type || "application/octet-stream",
+    });
 
     const imageUrl = buildObjectUrl(objectKey);
+
+    const currentCount = await prisma.atividade.count({
+      where: { creatorId: session.user.id },
+    });
 
     const atividade = await prisma.atividade.create({
       data: {
         title,
         imageUrl,
         estimatedTime,
+        timeInSeconds,
+        dayPeriod: dayPeriodRaw as DayPeriod,
         creatorId: session.user.id,
+        order: currentCount,
       },
       select: {
         id: true,
         title: true,
         imageUrl: true,
         estimatedTime: true,
+        timeInSeconds: true,
+        dayPeriod: true,
+        order: true,
         creator: {
           select: {
             id: true,

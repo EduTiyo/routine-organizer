@@ -7,6 +7,26 @@ interface VirtualCardCardProps {
 }
 
 const VirtualCardCard = ({ card }: VirtualCardCardProps) => {
+  const formatDayPeriod = (period: VirtualCard["dayPeriod"]) => {
+    switch (period) {
+      case "MORNING":
+        return "Manhã";
+      case "AFTERNOON":
+        return "Tarde";
+      case "EVENING":
+        return "Noite";
+      default:
+        return "Período";
+    }
+  };
+
+  const formatSeconds = (seconds: number) => {
+    if (seconds < 60) return `${seconds}s`;
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return secs === 0 ? `${minutes}m` : `${minutes}m ${secs}s`;
+  };
+
   return (
     <Card className="p-5 h-full flex flex-col gap-3">
       <div className="text-xs text-gray-500">
@@ -18,6 +38,9 @@ const VirtualCardCard = ({ card }: VirtualCardCardProps) => {
 
       <div>
         <h2 className="text-lg font-bold text-gray-900">{card.title}</h2>
+        <p className="text-sm text-muted-foreground">
+          Período: {formatDayPeriod(card.dayPeriod)}
+        </p>
         {card.imageUrl && (
           <div className="mt-3 rounded-lg overflow-hidden border bg-gray-50">
             <img
@@ -40,6 +63,12 @@ const VirtualCardCard = ({ card }: VirtualCardCardProps) => {
             </span>
           </span>
         </div>
+      )}
+
+      {card.timeInSeconds !== null && card.timeInSeconds > 0 && (
+        <p className="text-sm text-muted-foreground">
+          Tempo (s): {formatSeconds(card.timeInSeconds)}
+        </p>
       )}
     </Card>
   );
