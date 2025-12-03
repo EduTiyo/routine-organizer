@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
+import { Trophy, Star, Sparkles } from "lucide-react";
 import { toast } from "react-toastify";
 import { Howl } from "howler";
 import CurrentActivityCard from "./components/CurrentActivityCard";
 import ActivityList from "./components/ActivityList";
-import { secondsToMinutes } from "@/app/utils/seconds-to-minutes";
+import SuccessPage from "./components/SuccessPage";
+import RewardOverlay from "./components/RewardOverlay";
 
 type Atividade = {
   id: string;
@@ -24,6 +25,7 @@ type Rotina = {
   id: string;
   dateOfRealization: string | null;
   atividades: Atividade[];
+  status?: string;
 };
 
 const StudentPEI = () => {
@@ -37,6 +39,8 @@ const StudentPEI = () => {
   const startTimestampRef = useRef<number | null>(null);
   const progressContainerRef = useRef<HTMLDivElement | null>(null);
   const progressBarInstanceRef = useRef<any>(null);
+  const [finished, setFinished] = useState(false);
+  const [showReward, setShowReward] = useState(false);
 
   const hojeISO = useMemo(() => {
     const today = new Date();
@@ -130,6 +134,7 @@ const StudentPEI = () => {
         } as Rotina);
 
       setRotina(orderedToday || null);
+      setFinished(orderedToday?.status === 'COMPLETED');
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Falha ao carregar rotina";
@@ -172,12 +177,13 @@ const StudentPEI = () => {
     startTimestampRef.current = null;
     setCurrentIndex((prev) => {
       const next = prev + 1;
-      if (!rotina || next >= rotina.atividades.length) {
+      if (next >= rotina!.atividades.length) {
         toast.info("Rotina finalizada!");
         setStarted(false);
+        finishRoutine(rotina!.id);
         return prev;
       }
-      const nextActivity = rotina.atividades[next];
+      const nextActivity = rotina!.atividades[next];
       startTimerForActivity(nextActivity);
       return next;
     });
@@ -211,17 +217,41 @@ const StudentPEI = () => {
   };
 
   const handleComplete = () => {
+    stopTimer();
     playSuccessSound();
     recordStatus("COMPLETED");
-    goToNext();
+    setShowReward(true);
+
+    setTimeout(() => {
+      setShowReward(false);
+      goToNext();
+    }, 3500);
+  };
+
+  const finishRoutine = async (rotinaId: string) => {
+    setFinished(true);
+
+    try {
+      const res = await fetch(`/api/rotinas`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rotinaId: rotinaId,
+          status: "COMPLETED"
+        }),
+      });
+      if (!res.ok) throw new Error("Erro ao persistir conclusão");
+    } catch (err) {
+      toast.error("Erro ao salvar o progresso");
+    }
   };
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      if (!progressContainerRef.current || !started || !currentActivity) {
-        return;
-      }
+      if (!progressContainerRef.current || !started || !currentActivity) return;
+      if (showReward) return;
+
       const ProgressBar = await import("progressbar.js");
       if (cancelled) return;
 
@@ -250,7 +280,7 @@ const StudentPEI = () => {
     return () => {
       cancelled = true;
     };
-  }, [currentActivity, remainingSeconds, started]);
+  }, [currentActivity, remainingSeconds, started, showReward]);
 
   if (loading) {
     return (
@@ -262,7 +292,7 @@ const StudentPEI = () => {
   }
 
   if (error) {
-    return <div style={{ color: "red" }}>Erro: {error}</div>;
+    return <div className="text-red-500 font-medium">Erro: {error}</div>;
   }
 
   if (!rotina) {
@@ -277,13 +307,13 @@ const StudentPEI = () => {
   }
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-6 space-y-4 relative min-h-[500px]">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Minha Rotina</h1>
-        {!started && (
+        {!started && !finished && (
           <Button
             size="lg"
-            className="bg-emerald-600 hover:bg-emerald-500 text-lg px-6 py-4 rounded-xl"
+            className="bg-emerald-600 hover:bg-emerald-500 text-lg px-6 py-4 rounded-xl shadow-md transition-all hover:scale-105"
             onClick={handleStart}
           >
             Iniciar rotina
@@ -291,7 +321,7 @@ const StudentPEI = () => {
         )}
       </div>
 
-      {currentActivity && started && (
+      {currentActivity && started && !showReward && (
         <CurrentActivityCard
           activity={currentActivity}
           currentIndex={currentIndex}
@@ -302,8 +332,16 @@ const StudentPEI = () => {
         />
       )}
 
-      {!started && (
+      {!started && !finished && (
         <ActivityList atividades={rotina.atividades} />
+      )}
+
+      {showReward && (
+        <RewardOverlay />   
+      )}
+
+      {finished && (
+        <SuccessPage />
       )}
     </div>
   );

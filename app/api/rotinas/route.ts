@@ -247,3 +247,52 @@ export async function POST(req: Request) {
     return new NextResponse("Erro interno do servidor", { status: 500 });
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    console.log("chegou nessa porra")
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return new NextResponse("Acesso não autorizado", { status: 401 });
+    }
+
+    const body = await req.json();
+    const { rotinaId, status } = body;
+
+    if (!rotinaId) {
+      return new NextResponse("ID da rotina é obrigatório", { status: 400 });
+    }
+
+    const rotina = await prisma.rotina.findUnique({
+      where: { id: rotinaId },
+    });
+
+    if (!rotina) {
+      return new NextResponse("Rotina não encontrada", { status: 404 });
+    }
+
+    const isStudentOwner =
+      session.user.role === Role.STUDENT && rotina.studentId === session.user.id;
+    
+    const isTeacherCreator =
+      session.user.role === Role.TEACHER && rotina.creatorId === session.user.id;
+
+    if (!isStudentOwner && !isTeacherCreator) {
+      return new NextResponse("Permissão negada para alterar esta rotina", { status: 403 });
+    }
+
+    const updatedRotina = await prisma.rotina.update({
+      where: { id: rotinaId },
+      data: {
+        status: status || "COMPLETED",
+      },
+    });
+
+    return NextResponse.json(updatedRotina, { status: 200 });
+
+  } catch (error) {
+    console.error("ERRO AO ATUALIZAR ROTINA:", error);
+    return new NextResponse("Erro interno do servidor", { status: 500 });
+  }
+}
