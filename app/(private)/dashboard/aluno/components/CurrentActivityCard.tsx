@@ -147,7 +147,6 @@ const CurrentActivityCard = ({
           onClick={onSkip}
         >
           <SkipForward className="mr-2 h-5 w-5" />
-          Pular
         </Button>
         <Button
           className="bg-emerald-600 hover:bg-emerald-500 text-white flex-1 text-lg"
@@ -155,7 +154,6 @@ const CurrentActivityCard = ({
           onClick={handleComplete}
         >
           <Trophy className="mr-2 h-5 w-5" />
-          Concluir
         </Button>
       </div>
     </Card>
