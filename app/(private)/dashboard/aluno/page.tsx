@@ -1,15 +1,25 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { JSX, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy, Star, Sparkles } from "lucide-react";
+import {
+  Trophy,
+  Star,
+  Sparkles,
+  TrophyIcon,
+  PlayIcon,
+  SunriseIcon,
+  SunIcon,
+  MoonIcon,
+} from "lucide-react";
 import { toast } from "react-toastify";
 import { Howl } from "howler";
 import CurrentActivityCard from "./components/CurrentActivityCard";
 import ActivityList from "./components/ActivityList";
 import SuccessPage from "./components/SuccessPage";
 import RewardOverlay from "./components/RewardOverlay";
+import NextActivityPreview from "./components/NextActivityPreview";
 
 type Atividade = {
   id: string;
@@ -41,6 +51,7 @@ const StudentPEI = () => {
   const progressBarInstanceRef = useRef<any>(null);
   const [finished, setFinished] = useState(false);
   const [showReward, setShowReward] = useState(false);
+  const [trophyQuantity, setTrophyQuantity] = useState(0);
 
   const hojeISO = useMemo(() => {
     const today = new Date();
@@ -49,6 +60,17 @@ const StudentPEI = () => {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   }, []);
+
+  const renderTrophies = (count: number | null | undefined) => {
+    if (!Number.isFinite(count) || !count || count <= 0) return null;
+    return (
+      <div className="flex flex-wrap gap-1">
+        {Array.from({ length: count }).map((_, idx) => (
+          <TrophyIcon key={idx} className="h-15 w-15 text-yellow-500" />
+        ))}
+      </div>
+    );
+  };
 
   const successSound = useMemo(
     () =>
@@ -134,7 +156,7 @@ const StudentPEI = () => {
         } as Rotina);
 
       setRotina(orderedToday || null);
-      setFinished(orderedToday?.status === 'COMPLETED');
+      setFinished(orderedToday?.status === "COMPLETED");
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Falha ao carregar rotina";
@@ -160,6 +182,11 @@ const StudentPEI = () => {
       ? rotina.atividades[currentIndex]
       : null;
 
+  const nextActivity =
+    rotina && currentIndex + 1 < rotina.atividades.length
+      ? rotina.atividades[currentIndex + 1]
+      : null;
+
   const handleStart = () => {
     if (!rotina || rotina.atividades.length === 0) return;
     setStarted(true);
@@ -172,21 +199,24 @@ const StudentPEI = () => {
   };
 
   const goToNext = () => {
+    if (!rotina) return;
+
     stopTimer();
     setRemainingSeconds(null);
     startTimestampRef.current = null;
-    setCurrentIndex((prev) => {
-      const next = prev + 1;
-      if (next >= rotina!.atividades.length) {
-        toast.info("Rotina finalizada!");
-        setStarted(false);
-        finishRoutine(rotina!.id);
-        return prev;
-      }
-      const nextActivity = rotina!.atividades[next];
-      startTimerForActivity(nextActivity);
-      return next;
-    });
+
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= rotina.atividades.length) {
+      toast.info("Rotina finalizada!");
+      setStarted(false);
+      finishRoutine(rotina.id);
+      return;
+    }
+
+    const nextActivity = rotina.atividades[nextIndex];
+    startTimerForActivity(nextActivity);
+    setCurrentIndex(nextIndex);
+    setTrophyQuantity((t) => t + 1);
   };
 
   const recordStatus = async (status: string) => {
@@ -237,7 +267,7 @@ const StudentPEI = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           rotinaId: rotinaId,
-          status: "COMPLETED"
+          status: "COMPLETED",
         }),
       });
       if (!res.ok) throw new Error("Erro ao persistir conclusão");
@@ -313,36 +343,40 @@ const StudentPEI = () => {
         {!started && !finished && (
           <Button
             size="lg"
-            className="bg-emerald-600 hover:bg-emerald-500 text-lg px-6 py-4 rounded-xl shadow-md transition-all hover:scale-105"
+            className="bg-emerald-600 hover:bg-emerald-500 text-lg rounded-xl shadow-md transition-all hover:scale-105"
             onClick={handleStart}
           >
-            Iniciar rotina
+            <PlayIcon className="h-10 w-10" />
           </Button>
         )}
       </div>
 
       {currentActivity && started && !showReward && (
-        <CurrentActivityCard
-          activity={currentActivity}
-          currentIndex={currentIndex}
-          totalCount={rotina.atividades.length}
-          remainingSeconds={remainingSeconds}
-          onSkip={handleSkip}
-          onComplete={handleComplete}
-        />
+        <div className="flex flex-col gap-6 lg:flex-row">
+          <div className="flex-1 space-y-4">
+            <CurrentActivityCard
+              activity={currentActivity}
+              currentIndex={currentIndex}
+              totalCount={rotina.atividades.length}
+              remainingSeconds={remainingSeconds}
+              onSkip={handleSkip}
+              onComplete={handleComplete}
+            />
+            {renderTrophies(trophyQuantity)}
+          </div>
+          {nextActivity && (
+            <div className="lg:w-[320px]">
+              <NextActivityPreview activity={nextActivity} />
+            </div>
+          )}
+        </div>
       )}
 
-      {!started && !finished && (
-        <ActivityList atividades={rotina.atividades} />
-      )}
+      {!started && !finished && <ActivityList atividades={rotina.atividades} />}
 
-      {showReward && (
-        <RewardOverlay />   
-      )}
+      {showReward && <RewardOverlay />}
 
-      {finished && (
-        <SuccessPage />
-      )}
+      {finished && <SuccessPage />}
     </div>
   );
 };

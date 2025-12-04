@@ -1,7 +1,13 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 import { Clock } from "lucide-react";
+import Image from "next/image";
 
 type Activity = {
   id: string;
@@ -35,34 +41,44 @@ const ActivityList = ({ atividades }: ActivityListProps) => {
       <p className="text-sm text-muted-foreground">
         Atividades de hoje (em ordem):
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {atividades.map((atividade, idx) => (
-          <Card key={atividade.id} className="p-3 space-y-2">
-            <p className="text-xs text-gray-500">
-              #{idx + 1} —{" "}
-              {atividade.dayPeriod === "MORNING"
-                ? "Manhã"
-                : atividade.dayPeriod === "AFTERNOON"
-                ? "Tarde"
-                : "Noite"}
-            </p>
-            <p className="font-semibold">{atividade.title}</p>
-            {atividade.imageUrl && (
-              <img
-                src={atividade.imageUrl}
-                alt={atividade.title}
-                className="h-[50%] w-full object-cover rounded-md"
-              />
-            )}
-            {renderClocks(atividade.estimatedTime)}
-            {atividade.timeInSeconds !== null && (
-              <p className="text-sm text-muted-foreground">
-                Tempo: {atividade.timeInSeconds}s
-              </p>
-            )}
-          </Card>
-        ))}
-      </div>
+      <Carousel className="w-full">
+        <CarouselContent className="-ml-2">
+          {atividades.map((atividade, idx) => (
+            <CarouselItem
+              key={atividade.id}
+              className="pl-2 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+            >
+              <Card className="p-3 space-y-2">
+                <p className="text-xs text-gray-500">
+                  #{idx + 1} —{" "}
+                  {atividade.dayPeriod === "MORNING"
+                    ? "Manhã"
+                    : atividade.dayPeriod === "AFTERNOON"
+                    ? "Tarde"
+                    : "Noite"}
+                </p>
+                <p className="font-semibold">{atividade.title}</p>
+                {atividade.imageUrl && (
+                  <Image
+                    src={atividade.imageUrl}
+                    alt={atividade.title}
+                    className="h-[100%] w-full rounded-md"
+                    width={200}
+                    height={100}
+                    unoptimized
+                  />
+                )}
+                {renderClocks(atividade.estimatedTime)}
+                {atividade.timeInSeconds !== null && (
+                  <p className="text-sm text-muted-foreground">
+                    Tempo: {atividade.timeInSeconds}s
+                  </p>
+                )}
+              </Card>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
     </div>
   );
 };
