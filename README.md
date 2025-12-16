@@ -16,7 +16,8 @@ Crianças neurodivergentes na faixa etária de 4-10 anos.
 
 ## Mapa Conceitual
 
-<img width="734" height="442" alt="image" src="https://github.com/user-attachments/assets/1de0740f-b882-47cf-be56-878b27943a21" />
+<img width="1017" height="559" alt="image" src="https://github.com/user-attachments/assets/97c6e058-1e0d-4dad-8589-43ccfa8f7d39" />
+
 
 ## Modelo Instrucional
 
@@ -29,6 +30,65 @@ https://drive.google.com/file/d/1lK0rp8DiDv3jrDvKlzr48NFV3PE_2BDy/view?usp=shari
 ## Plano de Aula
 
 Está disponível no arquivo `plano-de-aula-rotina.md`
+
+## Pré-requisitos
+- Node.js (LTS recomendado)
+- Docker e Docker Compose
+- Gerenciador de pacotes (`npm`, `yarn` ou `pnpm`)
+
+## Configuração e Instalação
+
+1. Clonar o repositório
+```bash
+git clone https://github.com/learningspace-utfpr-cm/routine-organizer.git
+cd routine-organizer
+```
+2. Instalar dependências
+```bash
+npm install
+# ou
+yarn install
+```
+3. Configurar Variáveis de Ambiente
+Crie um arquivo `.env` na raiz do projeto. Você pode basear-se no arquivo `.env.example`
+```env
+# Banco de Dados
+DATABASE_URL="postgresql://routine:routine123@localhost:5432/routine-db?schema=public"
+
+# Autenticação (NextAuth)
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL_INTERNAL="http://localhost:3000"
+NEXTAUTH_SECRET="sua-chave-secreta-aqui" # Gere uma string segura
+
+# MinIO (Storage)
+MINIO_ENDPOINT="localhost"
+MINIO_PORT=9001
+MINIO_USE_SSL=false
+MINIO_ACCESS_KEY="minioadmin"
+MINIO_SECRET_KEY="minioadmin"
+MINIO_BUCKET="virtual-cards"
+MINIO_REGION="us-east-1"
+MINIO_PUBLIC_URL="http://localhost:9001"
+```
+
+4. Subir a infraestrutura com Docker
+Este projeto utiliza Docker para rodar o banco de dados PosgreSQL e MinIO. Execute:
+```bash
+docker compose up -d
+```
+
+4. Configurar o Banco de Dados (Prisma)
+Com os containers rodando, execute as migrações para criar as tabelas no banco:
+```bash
+npx primsa generate
+npx prisma migrate dev --name init
+```
+
+## Executar a aplicação
+Para iniciar o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
 ## Licença
 
