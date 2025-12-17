@@ -1,46 +1,55 @@
 export default function LOMMeta() {
   const metadata = {
-    "@context": "https://schema.org/",
-    "@type": "LearningResource",
-    name: "Rotinas Ilustradas – Objeto de Aprendizagem para Crianças Neurodivergentes",
-    description:
-      "Objeto de aprendizagem interativo que apresenta cartões de rotina com temporizadores ilustrativos, reforço sonoro e feedback visual",
-    interactivityType: "active",
-    inLanguage: "pt-BR",
-    keywords: [
-      "objeto de aprendizagem",
-      "rotina",
-      "educação inclusiva",
-      "neurodiversidade",
-      "TEA",
-      "aprendizagem visual",
-    ],
-    learningResourceType: "educational game",
-    educationalUse: "practice",
-    coverage: ["Educação Infantil", "Ensino Fundamental I"],
-    audience: {
-      "@type": "EducationalAudience",
-      educationalRole: "student",
+    lom: {
+      general: {
+        title:
+          "Rotinas Ilustradas – Objeto de Aprendizagem para Crianças Neurodivergentes",
+        language: "pt-BR",
+        description:
+          "Objeto de aprendizagem interativo que apresenta cartões de rotina com temporizadores ilustrativos, reforço sonoro e feedback visual",
+        keyword: [
+          "objeto de aprendizagem",
+          "rotina",
+          "educação inclusiva",
+          "neurodiversidade",
+          "TEA",
+          "aprendizagem visual",
+        ],
+      },
+      lifeCycle: {
+        version: "1.0",
+        contribute: [
+          {
+            role: "author",
+            entity: "Eduardo Knabben de Tiyo",
+            affiliation: "UTFPR - Universidade Tecnológica Federal do Paraná",
+          },
+          {
+            role: "author",
+            entity: "Victor Henrique Gasparoto de Almeida",
+            affiliation: "UTFPR - Universidade Tecnológica Federal do Paraná",
+          },
+        ],
+      },
+      educational: {
+        interactivityType: "active",
+        learningResourceType: "educational game",
+        educationalUse: "practice",
+        intendedEndUserRole: "student",
+        context: ["Educação Infantil", "Ensino Fundamental I"],
+        typicalAgeRange: "3-8",
+      },
+      rights: {
+        copyrightAndOtherRestrictions: "yes",
+        description: "https://creativecommons.org/licenses/by/4.0/",
+      },
     },
-    author: [
-      {
-        "@type": "Person",
-        name: "Eduardo Knabben de Tiyo",
-        affiliation: "UTFPR - Universidade Tecnológica Federal do Paraná",
-      },
-      {
-        "@type": "Person",
-        name: "Victor Henrique Gasparoto de Almeida",
-        affiliation: "UTFPR - Universidade Tecnológica Federal do Paraná",
-      },
-    ],
-    version: "1.0",
-    license: "https://creativecommons.org/licenses/by/4.0/",
   };
 
   return (
     <script
-      type="application/ld+json"
+      type="application/json"
+      id="lom-metadata"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(metadata) }}
     />
   );
